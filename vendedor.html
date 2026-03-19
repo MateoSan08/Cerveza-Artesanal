@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Panel Vendedor — BEERUTIFUL</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-logo">
+      <span class="logo-beer">🍺</span>
+      <span class="logo-text">BEERUTIFUL</span>
+    </a>
+    <div class="nav-actions">
+      <div class="user-chip">
+        <div class="user-avatar" id="vendedorInitial">V</div>
+        <span id="vendedorNombre">Vendedor</span>
+      </div>
+      <button class="btn btn-ghost btn-sm" onclick="logout()">Salir</button>
+    </div>
+  </div>
+</nav>
+
+<div class="page-wrap-seller">
+<div class="container-seller">
+
+  <div class="seller-header">
+    <div>
+      <h1 class="seller-title">Panel del Vendedor 🍺</h1>
+      <p class="seller-sub">Gestiona tus productos y pedidos</p>
+    </div>
+    <button class="btn btn-primary" onclick="mostrarFormProducto()">+ Publicar cerveza</button>
+  </div>
+
+  <!-- Stats -->
+  <div class="stats-strip">
+    <div class="stat-card beer">
+      <div class="stat-value" id="statMisProductos">–</div>
+      <div class="stat-label">Mis productos</div>
+    </div>
+    <div class="stat-card beer">
+      <div class="stat-value" id="statMisPedidos">–</div>
+      <div class="stat-label">Pedidos recibidos</div>
+    </div>
+    <div class="stat-card beer">
+      <div class="stat-value" id="statPendientes">–</div>
+      <div class="stat-label">Pedidos pendientes</div>
+    </div>
+  </div>
+
+  <!-- Tabs -->
+  <div class="tabs-bar">
+    <button class="tab-btn active" onclick="mostrarTab('productos', this)">🍺 Mis cervezas</button>
+    <button class="tab-btn" onclick="mostrarTab('pedidos', this)">📦 Pedidos</button>
+  </div>
+
+  <!-- Tab: Productos -->
+  <div id="tabProductos">
+    <div class="card" id="formCard" style="display:none">
+      <div class="card-header">
+        <span class="card-title" id="formTitulo">➕ Publicar nueva cerveza</span>
+        <button class="btn btn-ghost btn-sm" onclick="ocultarFormProducto()">Cancelar</button>
+      </div>
+      <div class="card-body">
+        <input type="hidden" id="prodId">
+        <div class="form-grid">
+          <div class="form-group">
+            <label class="form-label">Nombre de la cerveza *</label>
+            <input class="form-control" type="text" id="prodNombre" placeholder="Ej: Medellín Golden Ale">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Estilo *</label>
+            <select class="form-control" id="prodEstilo">
+              <option value="">Seleccionar estilo…</option>
+              <option value="IPA">IPA</option>
+              <option value="Stout">Stout</option>
+              <option value="Lager">Lager</option>
+              <option value="Pale Ale">Pale Ale</option>
+              <option value="Sour">Sour</option>
+              <option value="Porter">Porter</option>
+              <option value="Otro">Otro</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Precio (COP) *</label>
+            <input class="form-control" type="number" id="prodPrecio" placeholder="Ej: 12000" min="0">
+          </div>
+          <div class="form-group">
+            <label class="form-label">ABV (% alcohol)</label>
+            <input class="form-control" type="number" id="prodAbv" placeholder="Ej: 5.2" step="0.1" min="0" max="20">
+          </div>
+          <div class="form-group">
+            <label class="form-label">IBU (amargor)</label>
+            <input class="form-control" type="number" id="prodIbu" placeholder="Ej: 40" min="0">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Disponibilidad</label>
+            <select class="form-control" id="prodDisponible">
+              <option value="1">✅ Disponible</option>
+              <option value="0">❌ Agotado</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group" style="margin-top:12px">
+          <label class="form-label">Descripción</label>
+          <textarea class="form-control" id="prodDescripcion" rows="3" placeholder="Describe el sabor, aroma, maridaje…" style="resize:vertical"></textarea>
+        </div>
+        <div id="formError" class="alert alert-warning" style="display:none;margin-top:12px">
+          <span>⚠️</span><span id="formErrorMsg"></span>
+        </div>
+        <div style="margin-top:16px;display:flex;gap:8px">
+          <button class="btn btn-primary" onclick="guardarProducto()">Guardar cerveza</button>
+          <button class="btn btn-ghost" onclick="ocultarFormProducto()">Cancelar</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">Mis cervezas publicadas</span>
+      </div>
+      <div class="card-body" id="listaMisProductos">
+        <div class="empty-state"><div class="icon">🔄</div><p>Cargando…</p></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tab: Pedidos -->
+  <div id="tabPedidos" style="display:none">
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">Pedidos recibidos</span>
+      </div>
+      <div class="card-body" id="listaMisPedidos">
+        <div class="empty-state"><div class="icon">🔄</div><p>Cargando…</p></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+</div>
+
+<div class="toast-container" id="toastContainer"></div>
+
+<script src="app.js"></script>
+<script>
+window.onload = function() {
+  verificarSesionVendedor();
+};
+
+function verificarSesionVendedor() {
+  fetch('/sesion')
+    .then(r => r.json())
+    .then(data => {
+      if (!data.activa) { window.location.href = 'login.html'; return; }
+      if (data.usuario.rol !== 'vendedor' && data.usuario.rol !== 'admin') {
+        showToast('Acceso solo para vendedores', 'error');
+        setTimeout(() => window.location.href = 'index.html', 1500);
+        return;
+      }
+      const n = data.usuario.nombre;
+      document.getElementById('vendedorNombre').textContent = n;
+      document.getElementById('vendedorInitial').textContent = n.charAt(0).toUpperCase();
+      cargarMisProductos();
+      cargarMisPedidos();
+    })
+    .catch(() => window.location.href = 'login.html');
+}
+
+let editandoId = null;
+
+function mostrarFormProducto(prod = null) {
+  document.getElementById('formCard').style.display = 'block';
+  document.getElementById('formCard').scrollIntoView({behavior:'smooth'});
+  if (prod) {
+    editandoId = prod.id;
+    document.getElementById('formTitulo').textContent = '✏️ Editar cerveza';
+    document.getElementById('prodNombre').value = prod.nombre;
+    document.getElementById('prodEstilo').value = prod.estilo;
+    document.getElementById('prodPrecio').value = prod.precio;
+    document.getElementById('prodAbv').value = prod.abv || '';
+    document.getElementById('prodIbu').value = prod.ibu || '';
+    document.getElementById('prodDescripcion').value = prod.descripcion || '';
+    document.getElementById('prodDisponible').value = prod.disponible ? '1' : '0';
+  } else {
+    editandoId = null;
+    document.getElementById('formTitulo').textContent = '➕ Publicar nueva cerveza';
+    ['prodNombre','prodPrecio','prodAbv','prodIbu','prodDescripcion'].forEach(id => document.getElementById(id).value = '');
+    document.getElementById('prodEstilo').value = '';
+    document.getElementById('prodDisponible').value = '1';
+  }
+  document.getElementById('formError').style.display = 'none';
+}
+
+function ocultarFormProducto() {
+  document.getElementById('formCard').style.display = 'none';
+  editandoId = null;
+}
+
+function guardarProducto() {
+  const nombre = document.getElementById('prodNombre').value.trim();
+  const estilo = document.getElementById('prodEstilo').value;
+  const precio = parseFloat(document.getElementById('prodPrecio').value);
+  const abv = parseFloat(document.getElementById('prodAbv').value) || null;
+  const ibu = parseInt(document.getElementById('prodIbu').value) || null;
+  const descripcion = document.getElementById('prodDescripcion').value.trim();
+  const disponible = document.getElementById('prodDisponible').value === '1';
+
+  const errEl = document.getElementById('formError');
+  const errMsg = document.getElementById('formErrorMsg');
+  errEl.style.display = 'none';
+
+  if (!nombre || !estilo || isNaN(precio) || precio < 0) {
+    errEl.style.display = 'flex';
+    errMsg.textContent = 'Completa nombre, estilo y precio correctamente.';
+    return;
+  }
+
+  const payload = { nombre, estilo, precio, abv, ibu, descripcion, disponible };
+  const url = editandoId ? `/vendedor/producto/${editandoId}` : '/vendedor/producto';
+  const method = editandoId ? 'PUT' : 'POST';
+
+  fetch(url, {
+    method,
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload)
+  })
+  .then(r => r.json())
+  .then(data => {
+    if (data.error) {
+      errEl.style.display = 'flex';
+      errMsg.textContent = data.mensaje;
+    } else {
+      showToast(editandoId ? 'Cerveza actualizada ✅' : 'Cerveza publicada ✅', 'success');
+      ocultarFormProducto();
+      cargarMisProductos();
+    }
+  })
+  .catch(() => { errEl.style.display = 'flex'; errMsg.textContent = 'Error de conexión.'; });
+}
+
+function cargarMisProductos() {
+  fetch('/vendedor/mis-productos')
+    .then(r => r.json())
+    .then(data => {
+      document.getElementById('statMisProductos').textContent = Array.isArray(data) ? data.length : 0;
+      const c = document.getElementById('listaMisProductos');
+      if (!Array.isArray(data) || data.length === 0) {
+        c.innerHTML = `<div class="empty-state"><div class="icon">🍺</div><p>Aún no has publicado cervezas. ¡Empieza ahora!</p></div>`;
+        return;
+      }
+      c.innerHTML = data.map(p => `
+        <div class="beer-item-row">
+          <div class="beer-item-emoji">${estiloEmoji(p.estilo)}</div>
+          <div class="beer-item-info">
+            <div class="beer-item-name">${p.nombre}</div>
+            <div class="beer-item-meta">
+              <span class="badge badge-beer">${p.estilo}</span>
+              ${p.abv ? `<span class="badge badge-slate">${p.abv}% ABV</span>` : ''}
+              ${p.ibu ? `<span class="badge badge-slate">${p.ibu} IBU</span>` : ''}
+              <span class="badge ${p.disponible ? 'badge-green' : 'badge-red'}">${p.disponible ? '✅ Disponible' : '❌ Agotado'}</span>
+            </div>
+          </div>
+          <div class="beer-item-price">${formatCOP(p.precio)}</div>
+          <div class="beer-item-actions">
+            <button class="btn btn-ghost btn-sm" onclick='mostrarFormProducto(${JSON.stringify(p)})'>✏️ Editar</button>
+            <button class="btn btn-danger btn-sm" onclick="eliminarProducto(${p.id})">🗑 Eliminar</button>
+          </div>
+        </div>`).join('');
+    });
+}
+
+function eliminarProducto(id) {
+  if (!confirm('¿Eliminar esta cerveza?')) return;
+  fetch(`/vendedor/producto/${id}`, { method: 'DELETE' })
+    .then(r => r.json())
+    .then(data => {
+      showToast(data.mensaje, data.error ? 'error' : 'success');
+      cargarMisProductos();
+    });
+}
+
+function cargarMisPedidos() {
+  fetch('/vendedor/mis-pedidos')
+    .then(r => r.json())
+    .then(data => {
+      const pedidos = Array.isArray(data) ? data : [];
+      document.getElementById('statMisPedidos').textContent = pedidos.length;
+      document.getElementById('statPendientes').textContent = pedidos.filter(p => p.estado === 'pendiente').length;
+      const c = document.getElementById('listaMisPedidos');
+      if (pedidos.length === 0) {
+        c.innerHTML = `<div class="empty-state"><div class="icon">📦</div><p>No tienes pedidos aún.</p></div>`;
+        return;
+      }
+      c.innerHTML = pedidos.map(p => `
+        <div class="pedido-card">
+          <div class="pedido-info">
+            <div class="pedido-title">Pedido #${p.id} — ${p.producto_nombre}</div>
+            <div class="reserva-detail">
+              <span>👤 ${p.cliente_nombre}</span>
+              <span>📅 ${p.fecha}</span>
+              <span>📦 ${p.cantidad} unidad(es)</span>
+              <span>💰 ${formatCOP(p.total)}</span>
+            </div>
+            <div class="envio-datos">
+              ${p.direccion ? `<div class="envio-item">📍 <strong>Dirección:</strong> ${p.direccion}</div>` : ''}
+              ${p.telefono ? `<div class="envio-item">📱 <strong>Teléfono:</strong> ${p.telefono}</div>` : ''}
+              ${p.metodo_pago ? `<div class="envio-item">💳 <strong>Método de pago:</strong> ${p.metodo_pago}</div>` : ''}
+              ${p.notas_envio ? `<div class="envio-item">📝 <strong>Notas:</strong> ${p.notas_envio}</div>` : ''}
+            </div>
+          </div>
+          <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+            <span class="badge ${badgeEstado(p.estado)}">${p.estado}</span>
+            ${p.estado === 'pendiente' ? `
+              <button class="btn btn-sm btn-primary" onclick="actualizarPedido(${p.id},'confirmado')">Confirmar</button>
+              <button class="btn btn-sm btn-danger" onclick="actualizarPedido(${p.id},'cancelado')">Cancelar</button>
+            ` : ''}
+            ${p.estado === 'confirmado' ? `
+              <button class="btn btn-sm btn-primary" onclick="actualizarPedido(${p.id},'entregado')">Marcar entregado</button>
+            ` : ''}
+          </div>
+        </div>`).join('');
+    });
+}
+
+function actualizarPedido(id, estado) {
+  fetch('/vendedor/pedido', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ id, estado })
+  })
+  .then(r => r.json())
+  .then(data => {
+    showToast(data.mensaje, data.error ? 'error' : 'success');
+    cargarMisPedidos();
+  });
+}
+
+function mostrarTab(tab, btn) {
+  document.getElementById('tabProductos').style.display = tab === 'productos' ? 'block' : 'none';
+  document.getElementById('tabPedidos').style.display = tab === 'pedidos' ? 'block' : 'none';
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+function badgeEstado(e) {
+  return { pendiente:'badge-amber', confirmado:'badge-green', cancelado:'badge-red', entregado:'badge-slate' }[e] || 'badge-slate';
+}
+</script>
+</body>
+</html>

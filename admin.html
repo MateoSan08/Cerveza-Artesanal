@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin — BEERUTIFUL</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-logo">
+      <span class="logo-beer">🍺</span>
+      <span class="logo-text">BEERUTIFUL</span>
+    </a>
+    <div class="nav-actions">
+      <span class="badge badge-amber" style="margin-right:8px">Panel Admin</span>
+      <div class="user-chip">
+        <div class="user-avatar" id="adminInitial">A</div>
+        <span id="adminNombre">Admin</span>
+      </div>
+      <button class="btn btn-blue btn-sm" onclick="exportar()">📥 Exportar</button>
+      <button class="btn btn-ghost btn-sm" onclick="logout()">Salir</button>
+    </div>
+  </div>
+</nav>
+
+<div class="page-wrap-seller">
+<div class="container-seller">
+
+  <h1 class="seller-title">Dashboard Administrador 🛡️</h1>
+
+  <div class="stats-strip">
+    <div class="stat-card beer">
+      <div class="stat-value" id="statTotalProductos">–</div>
+      <div class="stat-label">Productos totales</div>
+    </div>
+    <div class="stat-card beer">
+      <div class="stat-value" id="statTotalVendedores">–</div>
+      <div class="stat-label">Vendedores</div>
+    </div>
+    <div class="stat-card beer">
+      <div class="stat-value" id="statTotalUsuarios">–</div>
+      <div class="stat-label">Usuarios registrados</div>
+    </div>
+    <div class="stat-card beer">
+      <div class="stat-value" id="statTotalPedidos">–</div>
+      <div class="stat-label">Pedidos totales</div>
+    </div>
+  </div>
+
+  <div class="tabs-bar">
+    <button class="tab-btn active" onclick="mostrarTab('productos', this)">🍺 Productos</button>
+    <button class="tab-btn" onclick="mostrarTab('usuarios', this)">👥 Usuarios</button>
+    <button class="tab-btn" onclick="mostrarTab('pedidos', this)">📦 Pedidos</button>
+  </div>
+
+  <!-- Tab Productos -->
+  <div id="tabProductos">
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">🍺 Todos los productos</span>
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+          <select class="form-control" id="filtroEstilo" onchange="filtrarAdmin()" style="width:auto;margin:0">
+            <option value="">Todos los estilos</option>
+            <option value="IPA">IPA</option>
+            <option value="Stout">Stout</option>
+            <option value="Lager">Lager</option>
+            <option value="Pale Ale">Pale Ale</option>
+            <option value="Sour">Sour</option>
+            <option value="Porter">Porter</option>
+          </select>
+          <button class="btn btn-ghost btn-sm" onclick="cargarProductosAdmin()">Ver todos</button>
+        </div>
+      </div>
+      <div class="card-body" id="listaProductosAdmin">
+        <div class="empty-state"><div class="icon">🔄</div><p>Cargando…</p></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tab Usuarios -->
+  <div id="tabUsuarios" style="display:none">
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">👥 Usuarios registrados</span>
+        <span class="badge badge-slate" id="badgeUsuarios">–</span>
+      </div>
+      <div class="card-body" id="listaUsuariosAdmin">
+        <div class="empty-state"><div class="icon">🔄</div><p>Cargando…</p></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tab Pedidos -->
+  <div id="tabPedidos" style="display:none">
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">📦 Todos los pedidos</span>
+      </div>
+      <div class="card-body" id="listaPedidosAdmin">
+        <div class="empty-state"><div class="icon">🔄</div><p>Cargando…</p></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+</div>
+
+<div class="toast-container" id="toastContainer"></div>
+
+<script src="app.js"></script>
+<script>
+let todosProductosAdmin = [];
+
+fetch('/sesion')
+  .then(r => r.json())
+  .then(data => {
+    if (!data.activa || data.usuario.rol !== 'admin') { window.location.href = 'login.html'; return; }
+    const n = data.usuario.nombre;
+    document.getElementById('adminNombre').textContent = n;
+    document.getElementById('adminInitial').textContent = n.charAt(0).toUpperCase();
+    cargarProductosAdmin();
+    cargarUsuariosAdmin();
+    cargarPedidosAdmin();
+  });
+
+function mostrarTab(tab, btn) {
+  ['tabProductos','tabUsuarios','tabPedidos'].forEach(id => {
+    document.getElementById(id).style.display = id === 'tab' + tab.charAt(0).toUpperCase() + tab.slice(1) ? 'block' : 'none';
+  });
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+function cargarProductosAdmin() {
+  fetch('/admin/productos')
+    .then(r => r.json())
+    .then(data => {
+      todosProductosAdmin = Array.isArray(data) ? data : [];
+      document.getElementById('statTotalProductos').textContent = todosProductosAdmin.length;
+      renderProductosAdmin(todosProductosAdmin);
+    });
+}
+
+function filtrarAdmin() {
+  const est = document.getElementById('filtroEstilo').value;
+  renderProductosAdmin(est ? todosProductosAdmin.filter(p => p.estilo === est) : todosProductosAdmin);
+}
+
+function renderProductosAdmin(data) {
+  const c = document.getElementById('listaProductosAdmin');
+  if (!data || data.length === 0) {
+    c.innerHTML = `<div class="empty-state"><div class="icon">🍺</div><p>No hay productos.</p></div>`; return;
+  }
+  c.innerHTML = data.map(p => `
+      <div class="beer-item-row">
+        <div class="beer-item-emoji">${estiloEmoji(p.estilo)}</div>
+        <div class="beer-item-info">
+          <div class="beer-item-name">${p.nombre}</div>
+          <div class="beer-item-meta">
+            <span class="badge badge-beer">${p.estilo}</span>
+            <span class="badge badge-slate">👤 ${p.vendedor_nombre || 'N/A'}</span>
+            <span class="badge ${p.disponible ? 'badge-green' : 'badge-red'}">${p.disponible ? 'Disponible' : 'Agotado'}</span>
+          </div>
+        </div>
+      <div class="beer-item-price">${formatCOP(p.precio)}</div>
+      <div class="beer-item-actions">
+        <button class="btn btn-danger btn-sm" onclick="eliminarProductoAdmin(${p.id})">🗑 Eliminar</button>
+      </div>
+    </div>`).join('');
+}
+
+function eliminarProductoAdmin(id) {
+  if (!confirm('¿Eliminar este producto?')) return;
+  fetch(`/admin/producto/${id}`, { method: 'DELETE' })
+    .then(r => r.json())
+    .then(data => {
+      showToast(data.mensaje, data.error ? 'error' : 'success');
+      cargarProductosAdmin();
+    });
+}
+
+function cargarUsuariosAdmin() {
+  fetch('/admin/usuarios')
+    .then(r => r.json())
+    .then(data => {
+      const arr = Array.isArray(data) ? data : [];
+      document.getElementById('statTotalUsuarios').textContent = arr.length;
+      document.getElementById('statTotalVendedores').textContent = arr.filter(u => u.rol === 'vendedor').length;
+      document.getElementById('badgeUsuarios').textContent = arr.length + ' usuarios';
+      const c = document.getElementById('listaUsuariosAdmin');
+      if (arr.length === 0) {
+        c.innerHTML = `<div class="empty-state"><div class="icon">👥</div><p>Sin usuarios.</p></div>`; return;
+      }
+      c.innerHTML = arr.map(u => `
+        <div class="reserva-card">
+          <div class="reserva-meta">
+            <div class="reserva-title">
+              ${u.nombre}
+              <span class="badge ${rolBadge(u.rol)}" style="margin-left:6px">${u.rol}</span>
+            </div>
+            <div class="reserva-detail">
+              <span>🪪 CC: ${u.documento}</span>
+              ${u.email ? `<span>✉️ ${u.email}</span>` : ''}
+            </div>
+          </div>
+          ${u.rol !== 'admin' ? `
+            <div style="display:flex;gap:6px">
+              <button class="btn btn-sm ${u.rol==='vendedor'?'btn-ghost':'btn-primary'}" onclick="cambiarRol(${u.id}, '${u.rol==='vendedor'?'cliente':'vendedor'}')">
+                ${u.rol === 'vendedor' ? '⬇️ Quitar vendedor' : '⬆️ Hacer vendedor'}
+              </button>
+              <button class="btn btn-danger btn-sm" onclick="eliminarUsuarioAdmin(${u.id})">Eliminar</button>
+            </div>` : ''}
+        </div>`).join('');
+    });
+}
+
+function rolBadge(rol) {
+  return { admin:'badge-amber', vendedor:'badge-beer', cliente:'badge-green' }[rol] || 'badge-slate';
+}
+
+function cambiarRol(id, nuevoRol) {
+  fetch('/admin/usuario/rol', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ id, rol: nuevoRol })
+  })
+  .then(r => r.json())
+  .then(data => {
+    showToast(data.mensaje, data.error ? 'error' : 'success');
+    cargarUsuariosAdmin();
+  });
+}
+
+function eliminarUsuarioAdmin(id) {
+  if (!confirm('¿Eliminar este usuario y todos sus datos?')) return;
+  fetch('/admin/eliminar-usuario', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ id })
+  })
+  .then(r => r.json())
+  .then(data => {
+    showToast(data.mensaje, data.error ? 'error' : 'success');
+    cargarUsuariosAdmin();
+    cargarProductosAdmin();
+  });
+}
+
+function cargarPedidosAdmin() {
+  fetch('/admin/pedidos')
+    .then(r => r.json())
+    .then(data => {
+      const arr = Array.isArray(data) ? data : [];
+      document.getElementById('statTotalPedidos').textContent = arr.length;
+      const c = document.getElementById('listaPedidosAdmin');
+      if (arr.length === 0) {
+        c.innerHTML = `<div class="empty-state"><div class="icon">📦</div><p>No hay pedidos.</p></div>`; return;
+      }
+      c.innerHTML = arr.map(p => `
+        <div class="pedido-card">
+          <div class="pedido-info">
+            <div class="pedido-title">Pedido #${p.id} — ${p.producto_nombre}</div>
+            <div class="reserva-detail">
+              <span>🛍 Cliente: ${p.cliente_nombre}</span>
+              <span>🍺 Vendedor: ${p.vendedor_nombre}</span>
+              <span>📅 ${p.fecha}</span>
+              <span>💰 ${formatCOP(p.total)}</span>
+            </div>
+          </div>
+          <span class="badge ${badgeEstado(p.estado)}">${p.estado}</span>
+        </div>`).join('');
+    });
+}
+
+function badgeEstado(e) {
+  return { pendiente:'badge-amber', confirmado:'badge-green', cancelado:'badge-red', entregado:'badge-slate' }[e] || 'badge-slate';
+}
+
+function exportar() {
+  fetch('/admin/exportar')
+    .then(r => r.blob())
+    .then(blob => {
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url; a.download = 'beerutiful_data.xlsx'; a.click();
+      window.URL.revokeObjectURL(url);
+      showToast('Datos exportados ✅', 'success');
+    })
+    .catch(e => showToast('Error al exportar: ' + e.message, 'error'));
+}
+</script>
+</body>
+</html>

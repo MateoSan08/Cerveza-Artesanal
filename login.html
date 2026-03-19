@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ingresar — BEERUTIFUL</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body class="auth-body">
+
+<div class="auth-page">
+
+  <!-- Panel izquierdo decorativo -->
+  <div class="auth-left beer-left">
+    <div class="auth-left-content">
+      <a href="index.html" class="auth-logo-link">
+        <div class="auth-logo-big">🍺</div>
+        <div class="auth-brand-name">BEERUTIFUL</div>
+      </a>
+      <p class="auth-tagline">La plataforma para <strong>descubrir, conectar y disfrutar</strong> la cerveza artesanal.</p>
+      <div class="auth-features">
+        <div class="auth-feature">
+          <div class="auth-feature-dot"></div>
+          <span>Encuentra cerveceros artesanales cerca de ti</span>
+        </div>
+        <div class="auth-feature">
+          <div class="auth-feature-dot"></div>
+          <span>Compara estilos, ABV y precios fácilmente</span>
+        </div>
+        <div class="auth-feature">
+          <div class="auth-feature-dot"></div>
+          <span>Haz pedidos directamente al productor</span>
+        </div>
+        <div class="auth-feature">
+          <div class="auth-feature-dot"></div>
+          <span>Publica tus propias cervezas si eres vendedor</span>
+        </div>
+      </div>
+    </div>
+    <div class="auth-hops">
+      <span>🌿</span><span>🌾</span><span>🌿</span>
+    </div>
+  </div>
+
+  <!-- Panel derecho -->
+  <div class="auth-right">
+    <div class="auth-form-wrap">
+
+      <!-- LOGIN -->
+      <div id="boxLogin">
+        <h1 class="auth-form-title">Bienvenido de vuelta 🍺</h1>
+        <p class="auth-form-sub">Ingresa a tu cuenta para continuar</p>
+        <div class="auth-form">
+          <div class="form-group">
+            <label class="form-label">Número de documento</label>
+            <input class="form-control" type="text" id="loginDocumento" placeholder="Ej: 1234567890" autocomplete="username">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Contraseña</label>
+            <input class="form-control" type="password" id="loginPassword" placeholder="••••••••" autocomplete="current-password">
+          </div>
+          <div id="loginError" class="alert alert-warning" style="display:none">
+            <span>⚠️</span><span id="loginErrorMsg"></span>
+          </div>
+          <button class="btn btn-primary btn-full btn-lg" id="btnLogin">Ingresar</button>
+        </div>
+        <p class="auth-switch">¿No tienes cuenta? <a href="#" id="linkRegistro">Crear cuenta</a></p>
+        <p class="auth-switch" style="margin-top:6px"><a href="#" id="linkRecuperar">¿Olvidaste tu contraseña?</a></p>
+      </div>
+
+      <!-- REGISTRO -->
+      <div id="boxRegistro" style="display:none">
+        <h1 class="auth-form-title">Crear cuenta 🌿</h1>
+        <p class="auth-form-sub">Únete a la comunidad cervecera artesanal</p>
+        <div class="auth-form">
+          <div class="form-group">
+            <label class="form-label">Nombre completo *</label>
+            <input class="form-control" type="text" id="regNombre" placeholder="Ej: Carlos Restrepo" autocomplete="name">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Correo electrónico</label>
+            <input class="form-control" type="email" id="regEmail" placeholder="tu@correo.com" autocomplete="email">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Número de documento *</label>
+            <input class="form-control" type="text" id="regDocumento" placeholder="Ej: 1234567890">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Contraseña *</label>
+            <input class="form-control" type="password" id="regPassword" placeholder="Mínimo 8 caracteres" autocomplete="new-password">
+          </div>
+          <div class="form-group">
+            <label class="form-label">¿Qué eres?</label>
+            <select class="form-control" id="regRol">
+              <option value="cliente">🛍 Cliente — quiero comprar cervezas</option>
+              <option value="vendedor">🍺 Vendedor — quiero publicar y vender</option>
+            </select>
+          </div>
+          <div id="regError" class="alert alert-warning" style="display:none">
+            <span>⚠️</span><span id="regErrorMsg"></span>
+          </div>
+          <button class="btn btn-primary btn-full btn-lg" id="btnRegistro">Crear cuenta</button>
+        </div>
+        <p class="auth-switch">¿Ya tienes cuenta? <a href="#" id="linkLogin">Iniciar sesión</a></p>
+      </div>
+
+      <!-- RECUPERAR -->
+      <div id="boxRecuperar" style="display:none">
+        <h1 class="auth-form-title">Recuperar contraseña</h1>
+        <p class="auth-form-sub">Te enviaremos un enlace a tu correo</p>
+        <div class="auth-form">
+          <div class="form-group">
+            <label class="form-label">Correo electrónico</label>
+            <input class="form-control" type="email" id="recEmail" placeholder="tu@correo.com">
+          </div>
+          <div id="recMsg" class="alert alert-info" style="display:none">
+            <span>📨</span><span id="recMsgText"></span>
+          </div>
+          <button class="btn btn-primary btn-full btn-lg" id="btnRecuperar">Enviar enlace</button>
+        </div>
+        <p class="auth-switch"><a href="#" id="linkLoginRec">← Volver al inicio de sesión</a></p>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+<div class="toast-container" id="toastContainer"></div>
+
+<script src="app.js"></script>
+<script>
+function showBox(id) {
+  ['boxLogin','boxRegistro','boxRecuperar'].forEach(b =>
+    document.getElementById(b).style.display = b === id ? 'block' : 'none');
+}
+
+document.getElementById('loginPassword').addEventListener('keydown', e => {
+  if (e.key === 'Enter') document.getElementById('btnLogin').click();
+});
+
+document.getElementById('btnLogin').onclick = function() {
+  const documento = document.getElementById('loginDocumento').value.trim();
+  const password  = document.getElementById('loginPassword').value;
+  const errEl = document.getElementById('loginError');
+  const errMsg = document.getElementById('loginErrorMsg');
+  errEl.style.display = 'none';
+
+  if (!documento || !password) {
+    errEl.style.display = 'flex'; errMsg.textContent = 'Ingresa tu documento y contraseña.'; return;
+  }
+  const btn = this; btn.disabled = true; btn.textContent = 'Ingresando…';
+
+  fetch('/login', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ documento, password })
+  })
+  .then(r => r.json())
+  .then(data => {
+    if (data.mensaje === 'ok') {
+      showToast('¡Bienvenido, ' + data.nombre + '! 🍺', 'success', 1500);
+      setTimeout(() => {
+        if (data.rol === 'admin') window.location.href = 'admin.html';
+        else if (data.rol === 'vendedor') window.location.href = 'vendedor.html';
+        else window.location.href = 'index.html';
+      }, 800);
+    } else {
+      errEl.style.display = 'flex'; errMsg.textContent = data.mensaje;
+      btn.disabled = false; btn.textContent = 'Ingresar';
+    }
+  })
+  .catch(() => {
+    errEl.style.display = 'flex'; errMsg.textContent = 'Error de conexión.';
+    btn.disabled = false; btn.textContent = 'Ingresar';
+  });
+};
+
+document.getElementById('btnRegistro').onclick = function() {
+  const nombre    = document.getElementById('regNombre').value.trim();
+  const email     = document.getElementById('regEmail').value.trim();
+  const documento = document.getElementById('regDocumento').value.trim();
+  const password  = document.getElementById('regPassword').value;
+  const rol       = document.getElementById('regRol').value;
+  const errEl = document.getElementById('regError');
+  const errMsg = document.getElementById('regErrorMsg');
+  errEl.style.display = 'none';
+
+  if (!nombre || !documento || !password) {
+    errEl.style.display = 'flex'; errMsg.textContent = 'Completa los campos obligatorios.'; return;
+  }
+  if (password.length < 8) {
+    errEl.style.display = 'flex'; errMsg.textContent = 'La contraseña debe tener al menos 8 caracteres.'; return;
+  }
+
+  const btn = this; btn.disabled = true; btn.textContent = 'Creando cuenta…';
+
+  fetch('/registro', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ nombre, email, documento, password, rol })
+  })
+  .then(r => r.json())
+  .then(data => {
+    if (data.mensaje === 'Cuenta creada correctamente') {
+      showToast('Cuenta creada. ¡Bienvenido a BEERUTIFUL! 🍺', 'success');
+      showBox('boxLogin');
+    } else {
+      errEl.style.display = 'flex'; errMsg.textContent = data.mensaje;
+    }
+    btn.disabled = false; btn.textContent = 'Crear cuenta';
+  })
+  .catch(() => {
+    errEl.style.display = 'flex'; errMsg.textContent = 'Error de conexión.';
+    btn.disabled = false; btn.textContent = 'Crear cuenta';
+  });
+};
+
+document.getElementById('btnRecuperar').onclick = function() {
+  const email = document.getElementById('recEmail').value.trim();
+  const msgEl = document.getElementById('recMsg');
+  const msgTxt = document.getElementById('recMsgText');
+  if (!email) { msgEl.style.display = 'flex'; msgEl.className = 'alert alert-warning'; msgTxt.textContent = 'Ingresa tu correo.'; return; }
+  const btn = this; btn.disabled = true; btn.textContent = 'Enviando…';
+  fetch('/recuperar-password', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email })
+  })
+  .then(r => r.json())
+  .then(data => {
+    msgEl.style.display = 'flex'; msgEl.className = 'alert alert-info';
+    msgTxt.textContent = data.mensaje || 'Si el correo existe, recibirás un enlace pronto.';
+    btn.disabled = false; btn.textContent = 'Enviar enlace';
+  })
+  .catch(() => {
+    msgEl.style.display = 'flex'; msgEl.className = 'alert alert-info';
+    msgTxt.textContent = 'Si el correo existe, recibirás un enlace pronto.';
+    btn.disabled = false; btn.textContent = 'Enviar enlace';
+  });
+};
+
+document.getElementById('linkRegistro').onclick = e => { e.preventDefault(); showBox('boxRegistro'); };
+document.getElementById('linkLogin').onclick     = e => { e.preventDefault(); showBox('boxLogin'); };
+document.getElementById('linkRecuperar').onclick = e => { e.preventDefault(); showBox('boxRecuperar'); };
+document.getElementById('linkLoginRec').onclick  = e => { e.preventDefault(); showBox('boxLogin'); };
+</script>
+</body>
+</html>

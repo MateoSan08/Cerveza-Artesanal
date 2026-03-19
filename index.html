@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BEERUTIFUL — Cerveza Artesanal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<!-- ══ NAVBAR ══════════════════════════════════════════════════ -->
+<nav class="navbar">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-logo">
+      <span class="logo-beer">🍺</span>
+      <span class="logo-text">BEERUTIFUL</span>
+    </a>
+    <div class="nav-links">
+      <a href="#catalogo" class="nav-link">Catálogo</a>
+      <a href="#categorias" class="nav-link">Estilos</a>
+      <a href="#vendedores" class="nav-link">Vendedores</a>
+    </div>
+    <div class="nav-actions">
+      <button class="btn-cart" onclick="toggleCart()">
+        🛒 <span class="cart-count" id="cartCount">0</span>
+      </button>
+      <div id="navUser" style="display:none">
+        <span class="nav-username" id="navNombre">–</span>
+        <a href="panel.html" class="btn btn-ghost btn-sm">Mi cuenta</a>
+        <button class="btn btn-ghost btn-sm" onclick="logout()">Salir</button>
+      </div>
+      <div id="navGuest">
+        <a href="login.html" class="btn btn-primary btn-sm">Ingresar</a>
+        <a href="vendedor.html" class="btn btn-amber btn-sm">Ser vendedor</a>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- ══ HERO ════════════════════════════════════════════════════ -->
+<header class="hero">
+  <div class="hero-bg">
+    <div class="hop-bg">
+      <div class="hop h1">🌿</div>
+      <div class="hop h2">🌾</div>
+      <div class="hop h3">🌿</div>
+      <div class="hop h4">🌾</div>
+    </div>
+  </div>
+  <div class="hero-content">
+    <div class="hero-badge">🍺 Plataforma Cervecera Artesanal</div>
+    <h1 class="hero-title">Descubre la<br><em>cerveza perfecta</em><br>cerca de ti</h1>
+    <p class="hero-sub">Conectamos a los mejores cerveceros artesanales con amantes de la buena cerveza. Explora estilos únicos, conoce a los productores y haz tu pedido.</p>
+    <div class="hero-cta">
+      <a href="#catalogo" class="btn btn-primary btn-lg">Explorar catálogo</a>
+      <a href="vendedor.html" class="btn btn-outline btn-lg">Publicar mis cervezas</a>
+    </div>
+    <div class="hero-stats">
+      <div class="hstat"><strong id="statProds">–</strong> <span>productos</span></div>
+      <div class="hstat-divider"></div>
+      <div class="hstat"><strong id="statVendedores">–</strong> <span>vendedores</span></div>
+      <div class="hstat-divider"></div>
+      <div class="hstat"><strong id="statEstilos">6</strong> <span>estilos</span></div>
+    </div>
+  </div>
+</header>
+
+<!-- ══ CATEGORÍAS ══════════════════════════════════════════════ -->
+<section class="section" id="categorias">
+  <div class="section-inner">
+    <h2 class="section-title">Explorar por estilo</h2>
+    <div class="cat-grid">
+      <button class="cat-chip active" onclick="filtrarEstilo('todos', this)">🍺 Todos</button>
+      <button class="cat-chip" onclick="filtrarEstilo('IPA', this)">🌿 IPA</button>
+      <button class="cat-chip" onclick="filtrarEstilo('Stout', this)">🖤 Stout</button>
+      <button class="cat-chip" onclick="filtrarEstilo('Lager', this)">🌊 Lager</button>
+      <button class="cat-chip" onclick="filtrarEstilo('Pale Ale', this)">☀️ Pale Ale</button>
+      <button class="cat-chip" onclick="filtrarEstilo('Sour', this)">🍋 Sour</button>
+      <button class="cat-chip" onclick="filtrarEstilo('Porter', this)">🍫 Porter</button>
+    </div>
+  </div>
+</section>
+
+<!-- ══ CATÁLOGO ════════════════════════════════════════════════ -->
+<section class="section" id="catalogo">
+  <div class="section-inner">
+    <div class="catalog-header">
+      <h2 class="section-title" style="margin-bottom:0">Catálogo de cervezas</h2>
+      <div class="catalog-controls">
+        <input class="form-control search-input" type="text" id="busqueda" placeholder="🔍 Buscar cerveza..." oninput="buscar()">
+        <select class="form-control" id="ordenar" onchange="ordenarProductos()">
+          <option value="nombre">Ordenar: Nombre</option>
+          <option value="precio_asc">Precio: menor a mayor</option>
+          <option value="precio_desc">Precio: mayor a menor</option>
+          <option value="abv">Mayor ABV</option>
+        </select>
+      </div>
+    </div>
+    <div class="products-grid" id="productosGrid">
+      <div class="empty-state"><div class="icon">🔄</div><p>Cargando productos…</p></div>
+    </div>
+    <div id="noResultados" class="empty-state" style="display:none">
+      <div class="icon">🔍</div>
+      <p>No se encontraron cervezas con ese filtro.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ══ VENDEDORES DESTACADOS ═══════════════════════════════════ -->
+<section class="section section-dark" id="vendedores">
+  <div class="section-inner">
+    <h2 class="section-title light">Vendedores destacados</h2>
+    <div class="vendedores-grid" id="vendedoresGrid">
+      <div class="empty-state"><div class="icon">🔄</div><p>Cargando…</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ CTA VENDEDOR ════════════════════════════════════════════ -->
+<section class="section section-cta">
+  <div class="section-inner cta-inner">
+    <div>
+      <h2 class="cta-title">¿Haces cerveza artesanal?</h2>
+      <p class="cta-sub">Únete a BEERUTIFUL y llega a cientos de clientes en tu ciudad. Publica tus productos en minutos y gestiona tus pedidos desde un solo lugar.</p>
+    </div>
+    <a href="vendedor.html" class="btn btn-amber btn-lg">Registrarme como vendedor →</a>
+  </div>
+</section>
+
+<!-- ══ FOOTER ══════════════════════════════════════════════════ -->
+<footer class="footer">
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <span class="logo-text sm">BEERUTIFUL</span>
+      <p>Conectando cerveceros artesanales con amantes de la buena cerveza.</p>
+    </div>
+    <div class="footer-links">
+      <strong>Plataforma</strong>
+      <a href="index.html">Catálogo</a>
+      <a href="vendedor.html">Ser vendedor</a>
+      <a href="login.html">Iniciar sesión</a>
+    </div>
+    <div class="footer-links">
+      <strong>Proyecto</strong>
+      <a href="#">Acerca de BEERUTIFUL</a>
+      <a href="#">PPI — TdeA</a>
+      <a href="#">Contacto</a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2025 BEERUTIFUL · Proyecto PPI · TdeA Institución Universitaria</span>
+    <span>Mateo Sánchez Torres & Steven Moreno Ardila</span>
+  </div>
+</footer>
+
+<!-- ══ CARRITO LATERAL ═════════════════════════════════════════ -->
+<div class="cart-overlay" id="cartOverlay" onclick="toggleCart()"></div>
+<aside class="cart-panel" id="cartPanel">
+  <div class="cart-header">
+    <span class="cart-title">🛒 Tu pedido</span>
+    <button class="cart-close" onclick="toggleCart()">✕</button>
+  </div>
+  <div class="cart-items" id="cartItems">
+    <div class="empty-state"><div class="icon">🍺</div><p>Tu carrito está vacío</p></div>
+  </div>
+  <div class="cart-footer" id="cartFooter" style="display:none">
+    <div class="cart-total">
+      <span>Total</span>
+      <strong id="cartTotal">$0</strong>
+    </div>
+    <button class="btn btn-primary btn-full" onclick="checkout()">Hacer pedido →</button>
+  </div>
+</aside>
+
+<!-- ══ MODAL PRODUCTO ══════════════════════════════════════════ -->
+<div class="modal-overlay" id="modalOverlay" onclick="cerrarModal()"></div>
+<div class="modal" id="modalProducto">
+  <button class="modal-close" onclick="cerrarModal()">✕</button>
+  <div id="modalContenido"></div>
+</div>
+
+<!-- ══ TOASTS ══════════════════════════════════════════════════ -->
+<div class="toast-container" id="toastContainer"></div>
+
+<script src="app.js"></script>
+<script>
+  window.onload = function() {
+    verificarSesion();
+    cargarProductos();
+    cargarVendedores();
+  };
+</script>
+</body>
+</html>
